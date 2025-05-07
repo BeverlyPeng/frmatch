@@ -1,4 +1,5 @@
 
+from IPython.core.debugger import set_trace
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
@@ -32,7 +33,11 @@ def FRtest(samp1, samp2, use_cosine = False,
     ## euclidean distance
     G = nx.Graph()
     for i in range(len(vectors)):
+        if sum(vectors[i]) == 0: 
+            vectors[i] = np.array([1e-10]*len(vectors[i]))
         for j in range(i + 1, len(vectors)):
+            if sum(vectors[j]) == 0: 
+                vectors[j] = np.array([1e-10]*len(vectors[j]))
             # Calculate the Euclidean distance between vectors[i] and vectors[j]
             if not use_cosine: 
                 distance = np.linalg.norm(np.array(vectors[i]) - np.array(vectors[j]))
@@ -59,6 +64,9 @@ def FRtest(samp1, samp2, use_cosine = False,
     topleft = myMST[:m,:m] # myMST[1:m,1:m]
     G = nx.Graph(topleft)
     runs_samp1 = nx.number_connected_components(G)
+    
+#     if runs != runs_samp1 + runs_samp2: 
+        
 
     ## calculate common nodes
     xsum = myMST.sum(axis = 0)
@@ -70,13 +78,16 @@ def FRtest(samp1, samp2, use_cosine = False,
     stat = (runs-mu)/np.sqrt(sigma_sq)
     p_value = norm.cdf(stat)
     
-#     print("C", C)
-#     print("m, n, N", m, n, N)
-#     print("mu", mu)
-#     print("sigma_sq", sigma_sq)
-#     print("stat", stat)
-#     print("p_value", p_value)
-#     print()
+#     if runs in [16, 17]: 
+#         print("C", C)
+#         print("runs", runs, runs_samp1, runs_samp2)
+#         print(myMST.shape, topleft.shape, bottomright.shape)
+#         print("m, n, N", m, n, N)
+#         print("mu", mu)
+#         print("sigma_sq", sigma_sq)
+#         print("stat", stat)
+#         print("p_value", p_value)
+#         print()
 
     ## plot
     if plot_mst: 

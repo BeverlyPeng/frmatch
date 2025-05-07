@@ -1,5 +1,4 @@
 
-from .utils import get_markers
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
@@ -25,22 +24,26 @@ def plot_cluster_by_markers(query, cluster_header, cluster, markers = None, mark
         return f"{cluster} not found in query"
     
     ## marker genes IN ORDER
-    if markers: 
+    if isinstance(markers, list): 
         marker_genes = markers[:]
+    elif "markers" in query.uns: 
+#         marker_genes = get_markers(query, cluster_header, "NSForest_markers")
+        marker_genes = query.uns["markers"]
     else: 
-        marker_genes = get_markers(query, cluster_header, "NSForest_markers")
+        return "Error: Need marker list to run plot_cluster_by_markers"
+    
     if not title: 
         title = f"{name_markers} markers on {name_adata}\n{cluster}"
-#     print(title)
+        
     ## cells of query cluster
     col_query = query.obs[cluster_header] == cluster
     
-    if use_common_markergenes: 
-        marker_genes_common = []
-        for marker in marker_genes: 
-            if marker in list(query.var_names): 
-                marker_genes_common.append(marker)
-        marker_genes = marker_genes_common[:]
+#     if use_common_markergenes: 
+#         marker_genes_common = []
+#         for marker in marker_genes: 
+#             if marker in list(query.var_names): 
+#                 marker_genes_common.append(marker)
+#         marker_genes = marker_genes_common[:]
     query_df = query[query.obs_names[col_query], marker_genes].to_df()
     
     ## randomly select nsamp number of cells
@@ -50,7 +53,7 @@ def plot_cluster_by_markers(query, cluster_header, cluster, markers = None, mark
         query_df = query_df.loc[mm,:]
     
     query_df = query_df.T
-    if query_df.shape[1] < 30: print(query_df.shape)
+#     if query_df.shape[1] < 30: print(query_df.shape)
     
     ## if to scale colorbar to [0,1] for normalized expr
 
@@ -68,7 +71,8 @@ def plot_cluster_by_markers(query, cluster_header, cluster, markers = None, mark
                      anchor = colorbar_loc) # anchor = (0, 0.5)
 
     if marker_legend_loc: 
-        cluster_markers = list(query.uns["nsforest_results"][cluster_header][cluster]["NSForest_markers"])
+#         cluster_markers = list(query.uns["nsforest_results"][cluster_header][cluster]["NSForest_markers"])
+        cluster_markers = query.uns["markers_per_cluster"][cluster]
         row_colors = ["#00BFC4" if marker in cluster_markers else "lightgray" for marker in marker_genes]
         for i, color in enumerate(row_colors):
             ax.add_patch(plt.Rectangle(xy=(-0.07, i), width=0.05, height=1, color=color, lw=0, transform=ax.get_yaxis_transform(), clip_on=False))

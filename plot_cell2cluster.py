@@ -3,20 +3,18 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath("./FRmatch"))
 import FRmatch
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sns
 from random import sample
-# from pheatmap import pheatmap
 import matplotlib.patches as mpatches
 
-def plot_bi_FRmatch(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
-                    p_adj_method="fdr_by", sig_level = 0.05, marker_legend_loc = (2.6, 1), 
-                    reorder = True, two_way_only = False, return_value = False,
-                    cellwidth = 10, cellheight = 10, title = None, filename = ""): 
+def plot_cell2cluster(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
+                      p_adj_method="fdr_by", sig_level = 0.05, marker_legend_loc = (2.6, 1), 
+                      reorder = True, two_way_only = False, return_value = False,
+                      cellwidth = 10, cellheight = 10, title = None, filename = ""): 
     
     ## get binary matrices for plotting
     pmat_cutoff_e1_e2 = FRmatch.cutoff_FRmatch(e1_e2, p_adj_method = p_adj_method, sig_level = sig_level)

@@ -12,7 +12,7 @@ import seaborn as sns
 import matplotlib.patches as mpatches
 
 def plot_FRmatch(pmat, type_ = "matches", p_adj_method="fdr_by", sig_level = 0.05, marker_legend_loc = (2.4, 1), 
-                 reorder = True, ignore_unassigned = False, return_value = False,
+                 reorder = True, ignore_unassigned = False, return_value = False, colors = ['#4575B4', '#FEE090'], 
                  figsize_width = 6, figsize_height = 12, main = None): 
     
     ## calculate adjusted p-values and determine matches
@@ -30,20 +30,22 @@ def plot_FRmatch(pmat, type_ = "matches", p_adj_method="fdr_by", sig_level = 0.0
         if ignore_unassigned: 
             pmat_cutoff = pmat_cutoff.drop("unassigned")
         fig, (ax1) = plt.subplots(1, 1, figsize=(figsize_width, figsize_height))
-        ax = sns.heatmap(pmat_cutoff, cmap = ["#4575B4", "#FEE090"], cbar = False, yticklabels = 1, square = True, ax = ax1, 
+        ax = sns.heatmap(pmat_cutoff, cmap = colors, cbar = False, yticklabels = 1, square = True, ax = ax1, 
                          linewidths = 0.5, linecolor = "gray") # cmap = "RdYlBu", 
         a = plt.title(f"{main}")
         ax.yaxis.tick_right()
         a = plt.yticks(rotation = 0, size = 6)
         a = plt.xticks(rotation = 270, size = 6)
         if marker_legend_loc: 
-            handles = [mpatches.Patch(color='#FEE090', label='Match'), 
-                       mpatches.Patch(color='#4575B4', label='No match')] 
-            a = plt.legend(title = "Marker", handles = handles, bbox_to_anchor = marker_legend_loc) # (1.53, 1) (2, 1)
+            handles = [mpatches.Patch(color=colors[1], label='Match'), 
+                       mpatches.Patch(color=colors[0], label='No match')] 
+            a = plt.legend(title = "", handles = handles, bbox_to_anchor = marker_legend_loc) # (1.53, 1) (2, 1)
             
     elif type_ == "padj": 
-        values = pd.DataFrame(pmat.unstack()).reset_index()
+        values = pd.DataFrame(pmat_adj.unstack()).reset_index()
+        fig, (ax1) = plt.subplots(1, 1, figsize=(figsize_width, figsize_height))
         a = plt.scatter(values["level_0"], values[0], color = "black")
+        a = plt.title(f"{main} {p_adj_method} {sig_level}")
         a = plt.ylabel("Adjusted p-value")
         a = plt.xlabel("Query cluster")
         a = plt.xticks(rotation = 270)
