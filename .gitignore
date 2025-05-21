@@ -3,3 +3,5 @@
 *.swp
 ~**
 *__pycache*
+*outputs_tutorial1_old*
+*outputs_tutorial3*
