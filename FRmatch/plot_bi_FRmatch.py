@@ -3,7 +3,6 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath("./FRmatch"))
 import FRmatch
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,7 +15,7 @@ import matplotlib.patches as mpatches
 def plot_bi_FRmatch(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
                     p_adj_method="fdr_by", sig_level = 0.05, marker_legend_loc = (2.6, 1), 
                     reorder = True, two_way_only = False, return_value = False,
-                    cellwidth = 10, cellheight = 10, title = None, filename = ""): 
+                    cellwidth = 10, cellheight = 10, title = None, filename = None): 
     
     ## get binary matrices for plotting
     pmat_cutoff_e1_e2 = FRmatch.cutoff_FRmatch(e1_e2, p_adj_method = p_adj_method, sig_level = sig_level)
@@ -60,5 +59,5 @@ def plot_bi_FRmatch(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
                        mpatches.Patch(color='#FEE090', label='One-way match'), 
                        mpatches.Patch(color='#4575B4', label='No match')] 
             a = plt.legend(title = "", handles = handles, bbox_to_anchor = marker_legend_loc) # (1.53, 1)
-    
+        if filename: plt.savefig(filename)
     return 

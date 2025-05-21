@@ -80,18 +80,18 @@ def FRmatch_cluster2cluster(query, ref, cluster_header_query, cluster_header_ref
     
     results = pd.DataFrame()
     for query_cluster in tqdm(np.unique(query_clusters), desc = "FRmatch"): 
-        if verbose > 0: print("QUERY_CLUSTER: ", query_cluster)
+        # if verbose > 0: print("QUERY: ", query_cluster)
 
         for ref_cluster in np.unique(ref_clusters): 
-            if verbose > 0: print("ref_cluster: ", ref_cluster)
-#             set_trace()
+            if verbose > 0: print("QUERY: ", query_cluster, "ref: ", ref_cluster)
+
             # subsetting query and ref to query_cluster and ref_cluster
             query_df = query_X_filt[query_X_filt["cluster"] == query_cluster]
             del query_df["cluster"]
             ref_df = ref_X_filt[ref_X_filt["cluster"] == ref_cluster]
             del ref_df["cluster"]
-            
-#             return query_df, ref_df
+            if verbose > 0: print(query_df.shape, ref_df.shape)
+
             df = FRmatch.FRtest_subsamp(query_df, ref_df, use_cosine = use_cosine, subsamp_size = subsamp_size, subsamp_iter = subsamp_iter, subsamp_seed = subsamp_seed, return_all = return_all)
             df["query_cluster"] = query_cluster
             df["ref_cluster"] = ref_cluster

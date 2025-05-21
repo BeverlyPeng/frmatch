@@ -34,6 +34,7 @@ def FRtest(samp1, samp2, use_cosine = False,
     G = nx.Graph()
     for i in range(len(vectors)):
         if sum(vectors[i]) == 0: 
+            # Add warning
             vectors[i] = np.array([1e-10]*len(vectors[i]))
         for j in range(i + 1, len(vectors)):
             if sum(vectors[j]) == 0: 

@@ -56,8 +56,6 @@ def cutoff_FRmatch(pmat, p_adj_method = "fdr_by", sig_level = 0.05):
     pvals_adj = pd.DataFrame(pvals_adj)
     pvals_adj.columns = pmat.columns
     pvals_adj.index = pmat.index
-    print(pvals_adj.columns)
-    print(pvals_adj.index)
     pvals_adj = pvals_adj.astype(int)
     pvals_adj = pvals_adj.astype(int)
     # pvals_adj = pd.concat([pvals_adj, pd.DataFrame(dict(pvals_adj.sum(axis = 0)), index = ["unassigned"])])
@@ -66,15 +64,11 @@ def cutoff_FRmatch(pmat, p_adj_method = "fdr_by", sig_level = 0.05):
         if sum(pvals_adj[col]) == 0: 
             zeros.append(col)
     temp = pd.DataFrame(dict(zip(pvals_adj.columns, [1 if val in zeros else 0 for val in pvals_adj.columns])), index = ["unassigned"])
-    print(temp.columns)
-    print(temp.index)
     # temp = pd.DataFrame(dict(zip(zeros, [1] * len(zeros))), index = ["unassigned"])
     pvals_adj = pd.concat([pvals_adj, temp])
 #     pvals_adj.index = pvals_adj.index.set_names('query_cluster', level=0)
 #     pvals_adj.columns.name = ["query_cluster", None]
 #     pvals_adj.index.name = "ref_cluster"
-    print(pvals_adj.columns)
-    print(pvals_adj.index)
     return pvals_adj
 
 def reorder_FRmatch(df, axis = 1): 

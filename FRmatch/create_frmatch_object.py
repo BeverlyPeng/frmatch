@@ -58,12 +58,13 @@ def create_frmatch_object_adata(adata, nsforest_results, marker_col = "binary_ge
     genes = list(np.unique(genes))
     adata = adata[:,genes]
     
-    # If `markers` in nsforest_results, store as ordered list in adata.uns
-    col = None
-    # from NSForest's nsforesting module
-    if "NSForest_markers" in list(nsforest_results.columns): col = "NSForest_markers"
-    # from NSForest's evaluating module
-    elif "markers" in list(nsforest_results.columns): col = "markers"
+#     # If `markers` in nsforest_results, store as ordered list in adata.uns
+#     col = None
+#     # from NSForest's nsforesting module
+#     if "NSForest_markers" in list(nsforest_results.columns): col = "NSForest_markers"
+#     # from NSForest's evaluating module
+#     elif "markers" in list(nsforest_results.columns): col = "markers"
+    col = marker_col
     if col: 
         if not isinstance(list(nsforest_results[col])[0], list): 
             nsforest_results[col] = [val.replace("'", "").replace("[", "").replace("]", "").split(", ") for val in nsforest_results[col]]
