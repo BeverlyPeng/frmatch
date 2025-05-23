@@ -53,7 +53,7 @@ def plot_FRmatch(pmat, type_ = "matches", p_adj_method="fdr_by", sig_level = 0.0
         if ignore_unassigned: 
             pmat_cutoff = pmat_cutoff.drop("unassigned")
         fig, (ax1) = plt.subplots(1, 1, figsize=(width, height))
-        ax = sns.heatmap(pmat_cutoff, cmap = colors, cbar = False, yticklabels = 1, square = True, ax = ax1, 
+        ax = sns.heatmap(pmat_cutoff, cmap = ['#4575B4', '#FEE090'], cbar = False, yticklabels = 1, square = True, ax = ax1, 
                          linewidths = 0.5, linecolor = "gray") # cmap = "RdYlBu", 
         a = plt.title(f"{title}")
         ax.yaxis.tick_right()

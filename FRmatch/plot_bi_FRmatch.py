@@ -13,7 +13,7 @@ from random import sample
 
 def plot_bi_FRmatch(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
                     p_adj_method="fdr_by", sig_level = 0.05, marker_legend_loc = (2.6, 1), 
-                    reorder = True, two_way_only = False, title = None, save = False): 
+                    reorder = True, two_way_only = False, width = 6, height = 12, title = None, save = False): 
     """\
     Plotting bi-directional FRmatch results after running padj_FRmatch and cutoff_FRmatch.
 
@@ -51,11 +51,11 @@ def plot_bi_FRmatch(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
     mat2 = pmat_cutoff_e2_e1.drop("unassigned").T
     mat_bi = mat1 + mat2
     
-    if two_way_only: 
-        mat_bi
-    
     ## unassigned row
     mat_bi = pd.concat([mat_bi, pd.DataFrame(dict(2*(mat_bi.sum() == 0)), index = ["unassigned"])])
+
+    if two_way_only: 
+        mat_bi = mat_bi.replace(1, 0)
         
 #     ## rename colnames and rownames
 #     mat_bi.index = [prefix[1] + name_e2 + val for val in pmat_cutoff_e1_e2.index]
@@ -65,27 +65,26 @@ def plot_bi_FRmatch(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
     if not title: title = "FR-Match cluster-to-cluster"
     if reorder: 
         mat_bi = FRmatch.reorder_FRmatch(mat_bi, axis = axis)
-    if two_way_only: 
-        mat_bi
-    else: 
-        fig, (ax1) = plt.subplots(1, 1, figsize=(12, 12))
-        ax = sns.heatmap(mat_bi, cmap = ["#4575B4", "#FEE090", "#D73027"], cbar = False, 
-                         yticklabels = 1, square = True, ax = ax1, 
-                         linewidths = 0.5, linecolor = "gray") # cmap = "RdYlBu", 
-        a = plt.title(f"{title}")
-        a = plt.xlabel(f"{prefix[0]}clusters")
-        a = plt.ylabel(f"{prefix[1]}clusters")
-        ax.yaxis.tick_right()
-        ax.yaxis.set_label_position("right")
-        a = plt.yticks(rotation = 0)
-        a = plt.xticks(rotation = 270)
-        if marker_legend_loc: 
-            handles = [mpatches.Patch(color='#D73027', label='Two-way match'), 
-                       mpatches.Patch(color='#FEE090', label='One-way match'), 
-                       mpatches.Patch(color='#4575B4', label='No match')] 
-            a = plt.legend(title = "", handles = handles, bbox_to_anchor = marker_legend_loc) # (1.53, 1)
-        if save == True: 
-            plt.savefig(f"frmatch_results_bidirectional_{prefix[0]}to{prefix[1]}.png")
-        elif isinstance(save, str): 
-            plt.savefig(save)
+        # Putting "unassigned" at the bottom
+        mat_bi = pd.concat([mat_bi.loc[mat_bi.index != 'unassigned'], mat_bi.loc[mat_bi.index == 'unassigned']])
+    fig, (ax1) = plt.subplots(1, 1, figsize=(width, height))
+    ax = sns.heatmap(mat_bi, cmap = ["#4575B4", "#FEE090", "#D73027"], cbar = False, 
+                        yticklabels = 1, square = True, ax = ax1, 
+                        linewidths = 0.5, linecolor = "gray") # cmap = "RdYlBu", 
+    a = plt.title(f"{title}")
+    a = plt.xlabel(f"{prefix[0]}clusters")
+    a = plt.ylabel(f"{prefix[1]}clusters")
+    ax.yaxis.tick_right()
+    ax.yaxis.set_label_position("right")
+    a = plt.yticks(rotation = 0)
+    a = plt.xticks(rotation = 270)
+    if marker_legend_loc: 
+        handles = [mpatches.Patch(color='#D73027', label='Two-way match'), 
+                    mpatches.Patch(color='#FEE090', label='One-way match'), 
+                    mpatches.Patch(color='#4575B4', label='No match')] 
+        a = plt.legend(title = "", handles = handles, bbox_to_anchor = marker_legend_loc) # (1.53, 1)
+    if save == True: 
+        plt.savefig(f"frmatch_results_bidirectional_{prefix[0]}to{prefix[1]}.png")
+    elif isinstance(save, str): 
+        plt.savefig(save)
     return 
