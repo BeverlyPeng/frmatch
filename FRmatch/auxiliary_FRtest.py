@@ -25,21 +25,14 @@ def FRtest_subsamp(samp1, samp2, use_cosine = False, subsamp_size = 20, subsamp_
     m = xx.shape[0]
     n = yy.shape[0]
     
-#     # setting seed 
-#     print("before", random.random())
+    # setting seed 
     if subsamp_seed: 
         random.seed(subsamp_seed)
-#     print("after", random.random())
-#     random.seed(subsamp_seed)
-#     print("after", random.random())
+
     out_all = pd.DataFrame()
     for b in range(subsamp_iter): 
-#         print("during", random.random())
         mm = sample(range(m), min(subsamp_size, m))
         nn = sample(range(n), min(subsamp_size, n))
-#         print(mm)
-#         print(nn)
-#         print()
         mm = [list(xx.index)[val] for val in mm]
         nn = [list(yy.index)[val] for val in nn]
         xx_B = xx.loc[mm,:]
@@ -63,13 +56,11 @@ def FRtest_cell2cluster(samp1, samp2, use_cosine = False, subsamp_size = 20, sub
     n = yy.shape[0]
     
     # setting seed 
-#     print("before", random.random())
     if subsamp_seed: 
         random.seed(subsamp_seed)
     
     out_max = {} # E18_1_Nuclei_NeuNP_H200_1030_MTG_layer1_BCH7: {'runs': 2, 'runs_samp1': 1, 'runs_samp2': 1, 'stat': -4.307588553812465, 'p_value': 8.25220137304871e-06}
     for b in range(subsamp_iter): 
-#         print("during", random.random())
         mm = sample(range(m), min(subsamp_size, m))
         nn = sample(range(n), min(subsamp_size, n))
         mm = [list(xx.index)[val] for val in mm]

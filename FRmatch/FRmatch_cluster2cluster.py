@@ -14,7 +14,7 @@ def FRmatch_cluster2cluster(query, ref, cluster_header_query, cluster_header_ref
                             use_cosine = True, filter_size = 5, subsamp_size = 20, subsamp_iter = 1000, subsamp_seed = False, 
                             prefix = ["query", "ref"], verbose = 0, return_all = False, save = False): 
     """\
-    Creating an AnnData object to run FRmatch on.
+    FRmatch cluster to cluster matching.
 
     Parameters
     ----------

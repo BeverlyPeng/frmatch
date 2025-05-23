@@ -94,7 +94,6 @@ def FRtest(samp1, samp2, use_cosine = False,
     
 #     if runs != runs_samp1 + runs_samp2: 
         
-
     ## calculate common nodes
     xsum = myMST.sum(axis = 0)
     C = sum(xsum*(xsum-1))/2
