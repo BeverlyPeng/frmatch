@@ -5,8 +5,27 @@ import anndata as ad
 import scanpy as sc
 
 def create_frmatch_object_adata(adata, nsforest_results, marker_col = "binary_genes", additional_markers = [], save = False): 
-    # marker_col inputs: NSForest_markers, markers, binary_genes (default: binary_genes)
+    """\
+    Creating an AnnData object to run FRmatch on.
+
+    Parameters
+    ----------
+        adata: AnnData
+            Annotated data matrix.
+        nsforest_results: pd.DataFrame
+            NSForest output.
+        marker_col: str (default: "binary_genes")
+            Column in nsforest_results to subset AnnData. Other options include ["NSForest_markers", "markers", "binary_genes"].
+        additional_markers: list (default: [])
+            Additional markers to include when subsetting AnnData.
+        save: bool | str (default: False)
+            Whether to save AnnData as new h5ad file. If string, save as string.
     
+    Returns
+    -------
+    adata: AnnData
+        AnnData object to run FRmatch on.
+    """
     # Checking adata is ad.AnnData
     if not isinstance(adata, ad.AnnData): 
         print("Error: please pass adata as an anndata object")
@@ -58,24 +77,16 @@ def create_frmatch_object_adata(adata, nsforest_results, marker_col = "binary_ge
     genes = list(np.unique(genes))
     adata = adata[:,genes]
     
-#     # If `markers` in nsforest_results, store as ordered list in adata.uns
-#     col = None
-#     # from NSForest's nsforesting module
-#     if "NSForest_markers" in list(nsforest_results.columns): col = "NSForest_markers"
-#     # from NSForest's evaluating module
-#     elif "markers" in list(nsforest_results.columns): col = "markers"
-    col = marker_col
-    if col: 
-        if not isinstance(list(nsforest_results[col])[0], list): 
-            nsforest_results[col] = [val.replace("'", "").replace("[", "").replace("]", "").split(", ") for val in nsforest_results[col]]
-        markers = []
-        for val in nsforest_results[col]: 
-            val = list(set(val).intersection(set(adata.var.index)))
-            val = list(set(val) - set(markers))
-            markers.extend(val)
-        # saving marker list (ordered according to dendrogram) as adata.uns["markers"]
-        adata.uns["markers"] = list(markers)
-        adata.uns["markers_per_cluster"] = dict(zip(nsforest_results["clusterName"], nsforest_results[col]))
+    if not isinstance(list(nsforest_results[marker_col])[0], list): 
+        nsforest_results[marker_col] = [val.replace("'", "").replace("[", "").replace("]", "").split(", ") for val in nsforest_results[marker_col]]
+    markers = []
+    for val in nsforest_results[marker_col]: 
+        val = list(set(val).intersection(set(adata.var.index)))
+        val = list(set(val) - set(markers))
+        markers.extend(val)
+    # saving marker list (ordered according to dendrogram) as adata.uns["markers"]
+    adata.uns["markers"] = list(markers)
+    adata.uns["markers_per_cluster"] = dict(zip(nsforest_results["clusterName"], nsforest_results[marker_col]))
         
     if save: 
         if isinstance(save, bool): 
@@ -88,7 +99,31 @@ def create_frmatch_object_adata(adata, nsforest_results, marker_col = "binary_ge
     return adata
 
 def create_frmatch_object_mtx(cell_by_gene, cluster_labels, nsforest_results, marker_col, taxonomy = None, additional_markers = [], save = False): 
-    # nsforest_results should have these columns minimum: clusterName, 
+    """\
+    Creating an AnnData object to run FRmatch on from a cell by gene matrix.
+
+    Parameters
+    ----------
+        cell_by_gene: pd.DataFrame
+            Cell by gene matrix
+        cluster_labels: list
+            Cluster membership.
+        nsforest_results: pd.DataFrame
+            NSForest output.
+        marker_col: str (default: "binary_genes")
+            Column in nsforest_results to subset AnnData. Other options include ["NSForest_markers", "markers", "binary_genes"].
+        taxonomy: list (default: None)
+            Cluster order. If not provided, sc.tl.dendrogram called.
+        additional_markers: list (default: [])
+            Additional markers to include when subsetting AnnData.
+        save: bool | str (default: False)
+            Whether to save AnnData as new h5ad file. If string, save as string.
+    
+    Returns
+    -------
+    adata: AnnData
+        AnnData object to run FRmatch on.
+    """
     adata = ad.AnnData(cell_by_gene)
     adata.obs = cluster_labels.copy()
     adata.obs = adata.obs.astype("category")

@@ -11,29 +11,60 @@ from tqdm import tqdm
 import pickle
 
 def FRmatch_cluster2cluster(query, ref, cluster_header_query, cluster_header_ref, marker_genes = [], 
-                            use_cosine = True, imputation = False, 
-                            filter_size = 5, filter_fscore = None, filter_nomarker = False, 
-                            add_pseudo_marker = False, pseudo_expr = 1, 
-                            subsamp_size = 20, subsamp_iter = 1000, subsamp_seed = False, 
-                            numCores = None, prefix = ["query", "ref"], 
-                            verbose = 0, return_all = False, save_as = False): 
+                            use_cosine = True, filter_size = 5, subsamp_size = 20, subsamp_iter = 1000, subsamp_seed = False, 
+                            prefix = ["query", "ref"], verbose = 0, return_all = False, save = False): 
+    """\
+    Creating an AnnData object to run FRmatch on.
+
+    Parameters
+    ----------
+        query: AnnData
+            Query object.
+        ref: AnnData
+            Reference object.
+        cluster_header_query: str
+            Column in `query.obs` storing cell annotation.
+        cluster_header_ref: str
+            Column in `ref.obs` storing cell annotation.
+        marker_genes: list (default: [])
+            Genes to subset instead of ref.uns["markers"].
+        use_cosine: bool (default: True)
+            Whether to use cosine distance vs Euclidean distance for tree construction.
+        filter_size: int (default: 5)
+            Minimum cluster size.
+        subsamp_size: int (default: 20)
+            Number of cells per dataset to run tree construction.
+        subsamp_iter: int (default: 1000)
+            Number of iterations
+        subsamp_seed: bool (default: False)
+            Seed for random number generator.
+        prefix: list (default: ["query", "ref"])
+            Labels for query and reference data.
+        verbose: int (default: 0)
+            Controls print statements.
+        return_all: bool (default: False)
+            Whether to return all FRtest results or the median.
+        save: bool | str (default: False)
+            Whether to save results as pkl. If string, save as string.
     
+    Returns
+    -------
+    dictionary
+        FRmatch results with keys ["settings", "p_values", "stat"]
+    """
     # Saving settings as dictionary
-    settings = {"query": prefix[0], "ref": prefix[1], "cluster_header_query": cluster_header_query, "cluster_header_ref": cluster_header_ref, "marker_genes": marker_genes, "use_cosine": use_cosine, "filter_size": filter_size, "subsamp_size": subsamp_size, "subsamp_iter": subsamp_iter, "subsamp_seed": subsamp_seed, "return_all": return_all, "save_as": save_as}
+    settings = {"query": prefix[0], "ref": prefix[1], "cluster_header_query": cluster_header_query, "cluster_header_ref": cluster_header_ref, "marker_genes": marker_genes, "use_cosine": use_cosine, "filter_size": filter_size, "subsamp_size": subsamp_size, "subsamp_iter": subsamp_iter, "subsamp_seed": subsamp_seed, "return_all": return_all, "save": save}
     
-    if save_as: 
-        if not isinstance(save_as, str): 
+    if save: 
+        if not isinstance(save, str): 
             filename = f"frmatch_results_cluster2cluster_{prefix[0]}to{prefix[1]}.pkl"
-        elif ".pkl" not in str(save_as): 
-            filename = save_as + ".pkl"
+        elif ".pkl" not in str(save): 
+            filename = save + ".pkl"
         else: 
-            filename = save_as
-    
-    ## check data object
+            filename = save
 
     ## find common marker genes from ref
     if len(marker_genes) == 0: 
-#         marker_genes = FRmatch.get_markers(ref, cluster_header, marker_col)
         marker_genes = ref.uns["markers"]
     
     marker_genes_common = []
@@ -45,14 +76,9 @@ def FRmatch_cluster2cluster(query, ref, cluster_header_query, cluster_header_ref
     if len(marker_genes) != len(marker_genes_common) and verbose > 0: 
         print(f"{sorted(list(set(marker_genes) - set(marker_genes_common)))} not found.")
     
-    ## filtering ref clusters without marker genes available in query
-    
     ## filtering small or low fscore clusters
     if verbose > 0: 
         print(f"Filtering small clusters: query and reference clusters with less than {filter_size} cells are not considered.")
-    if filter_fscore != None: 
-        return
-    
     query_shape = query.shape
     ref_shape = ref.shape
     query = FRmatch.filter_cluster(query, cluster_header_query, filter_size) #only filter on size, not fscore
@@ -67,20 +93,14 @@ def FRmatch_cluster2cluster(query, ref, cluster_header_query, cluster_header_ref
     ref_X_filt = ref[:, marker_genes_common].to_df()
     ref_X_filt["cluster"] = ref.obs[cluster_header_ref]
     
-    ## if to add pseudo marker to give signals in query clusters with almost no expression
-    
     ## extract cluster info from sce.objects
     query_clusters = list(query.obs[cluster_header_query])
     ref_clusters = list(ref.obs[cluster_header_ref])
 
-    ## split data by cluster membership and store in a list
-    
     ## FR comparison between two experiments
     ## prepare data for each combination of query cluster and ref cluster pair
-    
     results = pd.DataFrame()
     for query_cluster in tqdm(np.unique(query_clusters), desc = "FRmatch"): 
-        # if verbose > 0: print("QUERY: ", query_cluster)
 
         for ref_cluster in np.unique(ref_clusters): 
             if verbose > 0: print("QUERY: ", query_cluster, "ref: ", ref_cluster)
@@ -97,16 +117,13 @@ def FRmatch_cluster2cluster(query, ref, cluster_header_query, cluster_header_ref
             df["ref_cluster"] = ref_cluster
             results = pd.concat([results, df])
 
-        if save_as: 
-#             results_temp = results.pivot(index = "ref_cluster", columns = "query_cluster", values = "p_value")
-#             results_temp.to_csv(filename, index = True)
+        if save: 
             with open(filename, 'wb') as f:
                 pickle.dump({'settings': settings, "p_values": results.pivot(index = "ref_cluster", columns = "query_cluster", values = "p_value"), "stat": results.pivot(index = "ref_cluster", columns = "query_cluster", values = "stat")}, f)
         
     results_pval = results.pivot(index = "ref_cluster", columns = "query_cluster", values = "p_value")
-    if save_as: 
+    if save: 
         print(f"Saving frmatch results as... {filename}")
-#         results_pval.to_csv(filename, index = True)
         with open(filename, 'wb') as f:
             pickle.dump({'settings': settings, "p_values": results.pivot(index = "ref_cluster", columns = "query_cluster", values = "p_value"), "stat": results.pivot(index = "ref_cluster", columns = "query_cluster", values = "stat")}, f)
 

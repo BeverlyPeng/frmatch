@@ -6,13 +6,34 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 def plot_logcounts(adata_query, adata_ref = None): 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (8, 3))
-    a = ax1.hist(adata_query.to_df().unstack(), bins = 20)
-    a = ax1.set_title("Histogram of logcounts(adata_query)")
-    a = ax1.set_xlabel("logcounts(adata_query)")
-    a = ax1.set_ylabel("Frequency")
-    a = ax2.hist(adata_ref.to_df().unstack(), bins = 20)
-    a = ax2.set_title("Histogram of logcounts(adata_ref)")
-    a = ax2.set_xlabel("logcounts(adata_ref)")
-    a = ax2.set_ylabel("Frequency")
-    return
+    """\
+    Plots logcounts for input AnnData objects.
+
+    Parameters
+    ----------
+        adata_query: AnnData
+            Annotated data matrix.
+        adata_ref: AnnData (default: None)
+            Annotated data matrix.
+    """
+    if adata_ref: 
+        fig, axes = plt.subplots(1, 2, figsize = (8, 3))
+        p = axes[0].hist(adata_query.to_df().unstack(), bins = 20)
+        axes[0].set_title("Histogram of logcounts(adata_query)")
+        axes[0].set_ylabel("Frequency")
+        axes[0].set_xlabel("logcounts(adata_query)")
+
+        p = axes[1].hist(adata_ref.to_df().unstack(), bins = 20)
+        axes[1].set_title("Histogram of logcounts(adata_query)")
+        axes[1].set_ylabel("Frequency")
+        axes[1].set_xlabel("logcounts(adata_query)")
+        
+        fig.tight_layout()
+        return 
+    else: 
+        fig, ax = plt.subplots(figsize = (width, height))
+        p = ax.hist(adata_query.to_df().unstack(), bins = 20)
+        ax.set_title("Histogram of logcounts(adata_query)")
+        ax.set_xlabel("logcounts(adata_query)")
+        ax.set_ylabel("Frequency")
+        return 

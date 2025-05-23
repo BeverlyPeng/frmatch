@@ -16,6 +16,32 @@ def FRtest(samp1, samp2, use_cosine = False,
            vertex_size = 50, edge_width = 0.5, title = "Minimum spanning tree"): 
     """\
     Generating minimum spanning tree (MST) of 2 samples. 
+
+    Parameters
+    ----------
+        samp1: pd.DataFrame
+            First sample
+        samp2: pd.DataFrame
+            Second sample
+        use_cosine: bool (default: True)
+            Whether to use cosine distance vs Euclidean distance for tree construction.
+        plot_mst: bool (default: False)
+            Whether to plot minimum spanning tree representation with networkx. 
+        colors: list (default: [blue, yellow])
+            Colors distinguishing samp1 and samp2.
+        label_names: list (default: ["Sample 1", "Sample 2"])
+            Labels distinguishing samp1 and samp2.
+        vertex_size: int (default: 50)
+            Vertex size in plot.
+        edge_width: float (default: 0.5)
+            Edge width in plot.
+        title: str (default: "Minimum spanning tree")
+            Plot title.
+    
+    Returns
+    -------
+    dictionary
+        FRtest results with keys ["runs", "runs_samp1", "runs_samp2", "stat", "p_value"].
     """
     xx = samp1
     yy = samp2
@@ -97,8 +123,6 @@ def FRtest(samp1, samp2, use_cosine = False,
         labels = {}
         for i in range(m): labels[i] = colors[0]
         for i in range(m, N): labels[i] = colors[1]
-    #     pos = nx.bfs_layout(mst, 20)
-    #     nx.draw_networkx(mst, pos = pos, node_color = labels.values(), with_labels = True, node_size = 50, font_size = 10, label = label_names[0])
         nx.draw_networkx(mst, with_labels = False, node_size = vertex_size, node_color = labels.values(), 
                          width = edge_width, edge_color = "gray", font_size = 10, #label = "test", #label_names[0] 
                          edgecolors = "black", linewidths = 0.5, 

@@ -11,7 +11,32 @@ import matplotlib
 
 def plot_clusterSize(adata_E1, cluster_header_E1, adata_E2 = None, cluster_header_E2 = None, name_E1 = "E1", name_E2 = "E2", 
                      color_E1 = "#F0E442", color_E2 = "#56B4E9", width = 10, height = 10): 
-    
+    """\
+    Plots cluster size for input AnnData objects.
+
+    Parameters
+    ----------
+        adata_E1: AnnData
+            Annotated data matrix.
+        cluster_header_E1: str
+            Column in `adata_E1.obs` storing cell annotation.
+        adata_E2: AnnData (default: None)
+            Annotated data matrix.
+        cluster_header_E2: str (default: None)
+            Column in `adata_E2.obs` storing cell annotation.
+        name_E1: str (default: "E1")
+            Label for `adata_E1`.
+        name_E2: str (default: "E2")
+            Label for `adata_E2`.
+        color_E1: str (default: yellow)
+            Bar color for `adata_E1`.
+        color_E2: str (default: blue)
+            Bar color for `adata_E2`.
+        width: int (default: 10)
+            Width of plot.
+        height: int (default: 10)
+            Height of plot.
+    """
     if adata_E2 and cluster_header_E2: 
         fig, axes = plt.subplots(2, figsize = (width, height))
         title = f"{name_E1} ({len(np.unique(adata_E1.obs[cluster_header_E1]))} clusters, {adata_E1.shape[0]} cells)"
@@ -33,7 +58,7 @@ def plot_clusterSize(adata_E1, cluster_header_E1, adata_E2 = None, cluster_heade
         axes[1].set_xticklabels(dictionary.keys(), rotation = 90)
         
         fig.tight_layout()
-        return #fig, axes.tolist()
+        return 
     else: 
         fig, ax = plt.subplots(figsize = (width, height))
         title = f"{name_E1} ({len(np.unique(adata_E1.obs[cluster_header_E1]))} clusters, {adata_E1.shape[0]} cells)"
@@ -44,5 +69,5 @@ def plot_clusterSize(adata_E1, cluster_header_E1, adata_E2 = None, cluster_heade
         ax.set_ylabel("Size")
         ax.set_xlabel("Cluster")
         ax.set_xticklabels(dictionary.keys(), rotation = 90)
-        return #fig, [ax]
+        return 
     
