@@ -68,9 +68,8 @@ def plot_bi_FRmatch(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
         # Putting "unassigned" at the bottom
         mat_bi = pd.concat([mat_bi.loc[mat_bi.index != 'unassigned'], mat_bi.loc[mat_bi.index == 'unassigned']])
     fig, (ax1) = plt.subplots(1, 1, figsize=(width, height))
-    ax = sns.heatmap(mat_bi, cmap = ["#4575B4", "#FEE090", "#D73027"], cbar = False, 
-                        yticklabels = 1, square = True, ax = ax1, 
-                        linewidths = 0.5, linecolor = "gray") # cmap = "RdYlBu", 
+    ax = sns.heatmap(mat_bi, cmap = ["#4575B4", "#FEE090", "#D73027"], cbar = False, yticklabels = 1, 
+                     square = True, ax = ax1, linewidths = 0.5, linecolor = "gray") 
     a = plt.title(f"{title}")
     a = plt.xlabel(f"{prefix[0]}clusters")
     a = plt.ylabel(f"{prefix[1]}clusters")

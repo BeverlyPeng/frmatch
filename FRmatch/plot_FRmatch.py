@@ -53,22 +53,23 @@ def plot_FRmatch(pmat, type_ = "matches", p_adj_method="fdr_by", sig_level = 0.0
         if ignore_unassigned: 
             pmat_cutoff = pmat_cutoff.drop("unassigned")
         fig, (ax1) = plt.subplots(1, 1, figsize=(width, height))
-        ax = sns.heatmap(pmat_cutoff, cmap = ['#4575B4', '#FEE090'], cbar = False, yticklabels = 1, square = True, ax = ax1, 
-                         linewidths = 0.5, linecolor = "gray") # cmap = "RdYlBu", 
+        ax = sns.heatmap(pmat_cutoff, cmap = ['#4575B4', '#FEE090'], cbar = False, yticklabels = 1, 
+                         square = True, ax = ax1, linewidths = 0.5, linecolor = "gray") 
         a = plt.title(f"{title}")
         ax.yaxis.tick_right()
-        a = plt.yticks(rotation = 0, size = 6)
-        a = plt.xticks(rotation = 270, size = 6)
+        a = plt.yticks(rotation = 0) # size = 6
+        a = plt.xticks(rotation = 270) # size = 6
         if marker_legend_loc: 
             handles = [mpatches.Patch(color='#FEE090', label='Match'), 
                        mpatches.Patch(color='#4575B4', label='No match')]
             a = plt.legend(title = "", handles = handles, bbox_to_anchor = marker_legend_loc)
             
     elif type_ == "padj": 
+        if not title: title = "FR-Match cluster-to-cluster adjusted p-values"
         values = pd.DataFrame(pmat_adj.unstack()).reset_index()
         fig, (ax1) = plt.subplots(1, 1, figsize=(width, height))
         a = plt.scatter(values["level_0"], values[0], color = "black")
-        a = plt.title(f"{title} {p_adj_method} {sig_level}")
+        a = plt.title(f"{title}")
         a = plt.ylabel("Adjusted p-value")
         a = plt.xlabel("Query cluster")
         a = plt.xticks(rotation = 270)
