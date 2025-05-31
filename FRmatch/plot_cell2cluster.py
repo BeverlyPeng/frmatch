@@ -11,52 +11,63 @@ import seaborn as sns
 from random import sample
 import matplotlib.patches as mpatches
 
-def plot_cell2cluster(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
-                      p_adj_method="fdr_by", sig_level = 0.05, marker_legend_loc = (2.6, 1), 
-                      reorder = True, two_way_only = False, return_value = False,
-                      cellwidth = 10, cellheight = 10, title = None, filename = ""): 
+def plot_cell2cluster(results, reorder = True, order_query = [], order_ref = [], axis = 0, sig_level = 0.1, prefix = ["query", "ref"]): 
+    # Sorting my query_cluster per sample's (index) p_value
+    results = results.sort_values(["query_cluster", "index", "p_value"], ascending = [True, True, False])
+    # Checking for duplicated samples (index)
+    results = results[~results.duplicated(["index", "query_cluster", "ref_cluster"], keep = "first")]    # Grouping all samples (index) by query_clusters
+    results = results.pivot(index = "ref_cluster", columns = ["query_cluster", "index"], values = "p_value").replace(np.nan, 0)
+    results = FRmatch.padj_FRmatch(results, p_adj_method = "fdr_bh")
+    zeros = []
+    for col in results.columns: 
+        maximum = max(results[col])
+        if maximum < sig_level: 
+            maximum = -1
+        values = results[col] == maximum
+        results[col] = values
+        if sum(results[col]) == 0: 
+            zeros.append(col)
+    temp = pd.DataFrame(dict(zip(results.columns, [1 if val in zeros else 0 for val in results.columns])), index = ["unassigned"])
+    temp.columns.names = ["query_cluster", "index"]
+    results = pd.concat([results, temp])
+    results.index.name = "ref_cluster"
     
-    ## get binary matrices for plotting
-    pmat_cutoff_e1_e2 = FRmatch.cutoff_FRmatch(e1_e2, p_adj_method = p_adj_method, sig_level = sig_level)
-    pmat_cutoff_e2_e1 = FRmatch.cutoff_FRmatch(e2_e1, p_adj_method = p_adj_method, sig_level = sig_level)
-    
-    ## combine two matrices to one two-way matrix
-    mat1 = pmat_cutoff_e1_e2.drop("unassigned")
-    mat2 = pmat_cutoff_e2_e1.drop("unassigned").T
-    mat_bi = mat1 + mat2
-    
-    if two_way_only: 
-        mat_bi
-    
-    ## unassigned row
-    mat_bi = pd.concat([mat_bi, pd.DataFrame(dict(2*(mat_bi.sum() == 0)), index = ["unassigned"])])
-        
-#     ## rename colnames and rownames
-#     mat_bi.index = [prefix[1] + name_e2 + val for val in pmat_cutoff_e1_e2.index]
-#     mat_bi.columns = [prefix[0] + name_e1 + val for val in pmat_cutoff_e1_e2.columns]
-    
-    ## plot
-    if not title: title = "FR-Match cluster-to-cluster"
+    results_2 = results.groupby(level = ["query_cluster"], axis = 1).sum()
     if reorder: 
-        mat_bi = FRmatch.reorder_FRmatch(mat_bi, axis = axis)
-    if two_way_only: 
-        mat_bi
-    else: 
-        fig, (ax1) = plt.subplots(1, 1, figsize=(12, 12))
-        ax = sns.heatmap(mat_bi, cmap = ["#4575B4", "#FEE090", "#D73027"], cbar = False, 
-                         yticklabels = 1, square = True, ax = ax1, 
-                         linewidths = 0.5, linecolor = "gray") # cmap = "RdYlBu", 
-        a = plt.title(f"{title}")
-        a = plt.xlabel(f"{prefix[0]}clusters")
-        a = plt.ylabel(f"{prefix[1]}clusters")
-        ax.yaxis.tick_right()
-        ax.yaxis.set_label_position("right")
-        a = plt.yticks(rotation = 0)
-        a = plt.xticks(rotation = 270)
-        if marker_legend_loc: 
-            handles = [mpatches.Patch(color='#D73027', label='Two-way match'), 
-                       mpatches.Patch(color='#FEE090', label='One-way match'), 
-                       mpatches.Patch(color='#4575B4', label='No match')] 
-            a = plt.legend(title = "", handles = handles, bbox_to_anchor = marker_legend_loc) # (1.53, 1)
+        unassigned = results_2.loc[results_2.index == 'unassigned'].copy()
+        results_2 = results_2.loc[results_2.index != 'unassigned'].copy()
+        results_2 = FRmatch.reorder_FRmatch(results_2, axis = axis)
+        results_2 = pd.concat([results_2, unassigned])
+    
+    results_3 = pd.DataFrame(columns = ["ref_cluster", "query_cluster", "value"])
+    results_3 = pd.DataFrame(columns = ["match", "query_cluster", "Prop"])
+    for index, row in results_2.iterrows(): 
+        for col in results_2.columns: 
+            if sum(results_2[col]) == 0: value = 0
+            else: value = row[col] / sum(results_2[col])
+            results_3 = pd.concat([results_3, pd.DataFrame(dict(zip(results_3.columns, [index, col, value])), index = [0])])
+    
+    if not reorder and len(order_query) != 0: 
+        # query cluster order
+        results_3["query_cluster"] = results_3["query_cluster"].astype("category")
+        results_3["query_cluster"] = results_3["query_cluster"].cat.set_categories(order_query)
+    if not reorder and len(order_ref) != 0: 
+        # reference cluster order
+        results_3["match"] = results_3["match"].astype("category")
+        results_3["match"] = results_3["match"].cat.set_categories(order_ref)
+        results_3 = results_3.sort_values(["match", "query_cluster"])
+    results_3["match"] = [prefix[0] + val for val in results_3["match"]]
+    results_3["query_cluster"] = [prefix[1] + val for val in results_3["query_cluster"]]
+
+    fig, (ax1) = plt.subplots(1, 1, figsize=(6, 6))
+    sns.set_theme(style="whitegrid", rc={"grid.color": "lightgray", "grid.linewidth": 0.5})
+    # sns.set_theme(style="whitegrid", rc = {"axes.edgecolor": "darkgray", "xtick.bottom": True, "ytick.left": True})
+    ax = sns.scatterplot(results_3, x = "query_cluster", y = "match", hue = "Prop", size = "Prop", 
+                        hue_norm = (0, 1), size_norm = (0, 1), legend = "brief", 
+                        sizes = (1, 200), alpha = 0.75, linewidth = 0.7, edgecolor = "gray", 
+                        palette = sns.color_palette("viridis", as_cmap=True), 
+                       )
+    a = plt.xticks(rotation = 90)
+    a = plt.legend(title = "Prop", bbox_to_anchor = (1.0, 0.7))
     
     return 

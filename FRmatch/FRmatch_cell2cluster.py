@@ -10,8 +10,9 @@ import scanpy as sc
 from tqdm import tqdm
 import pickle
 
-def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref, feature_selection = "reference_markers", 
-                         use_cosine = True, filter_size = 5, subsamp_size = 10, subsamp_iter = 2000, subsamp_seed = 916, 
+def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref, 
+                         feature_selection = "reference_markers", use_cosine = True, 
+                         filter_size = 5, subsamp_size = 10, subsamp_iter = 2000, subsamp_seed = False, 
                          subsamp_iter_custom = False, subsamp_iter_custom_k = 5, 
                          prefix = ["query", "ref"], verbose = 0, save = False): 
     """\
@@ -95,6 +96,8 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref, f
     ## filtering small clusters
     if verbose > 0: 
         print(f"Filtering small clusters: query and reference clusters with less than {filter_size} cells are not considered.")
+    query = FRmatch.filter_cluster(query, cluster_header_query, filter_size) 
+    ref = FRmatch.filter_cluster(ref, cluster_header_ref, filter_size)
         
     ## reduced data
     query_reduced = query[:, marker_genes_common]

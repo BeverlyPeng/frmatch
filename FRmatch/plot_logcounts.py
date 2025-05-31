@@ -31,7 +31,7 @@ def plot_logcounts(adata_query, adata_ref = None):
         fig.tight_layout()
         return 
     else: 
-        fig, ax = plt.subplots(figsize = (width, height))
+        fig, ax = plt.subplots(figsize = (4, 3))
         p = ax.hist(adata_query.to_df().unstack(), bins = 20)
         ax.set_title("Histogram of logcounts(adata_query)")
         ax.set_xlabel("logcounts(adata_query)")

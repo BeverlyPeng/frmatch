@@ -99,21 +99,46 @@ def FRtest(samp1, samp2, use_cosine = False,
     C = sum(xsum*(xsum-1))/2
     ## calculate mean and variance
     mu = 2*m*n/N + 1
+    # print("C", C)
+    # print("runs", runs, runs_samp1, runs_samp2)
+    # print(myMST.shape, topleft.shape, bottomright.shape)
+    # print("m, n, N", m, n, N)
+    # print("mu", mu)
+    # print("sigma_sq", sigma_sq)
+    # try: 
     sigma_sq = (2*m*n/(N*(N-1)))*((2*m*n-N)/N+(C-N+2)*(N*(N-1)-4*m*n+2)/((N-2)*(N-3)))
+    # except: 
+    #     print("C", C)
+    #     print("runs", runs, runs_samp1, runs_samp2)
+    #     print(myMST.shape, topleft.shape, bottomright.shape)
+    #     print("m, n, N", m, n, N)
+    #     print("mu", mu)
+    #     print("sigma_sq", sigma_sq)
+    #     # print("stat", stat)
+    #     # print("p_value", p_value)
+    #     print()
     ## the standardized FR-stat and p-value
-    stat = (runs-mu)/np.sqrt(sigma_sq)
-    p_value = norm.cdf(stat)
     
-#     if runs in [16, 17]: 
-#         print("C", C)
-#         print("runs", runs, runs_samp1, runs_samp2)
-#         print(myMST.shape, topleft.shape, bottomright.shape)
-#         print("m, n, N", m, n, N)
-#         print("mu", mu)
-#         print("sigma_sq", sigma_sq)
-#         print("stat", stat)
-#         print("p_value", p_value)
-#         print()
+    # Fixing cases where sigma_sq is negative (one group is size 1 and p-value cannot be calculated)
+    if sigma_sq < 0: 
+        stat = np.nan
+        p_value = np.nan
+    else: 
+        stat = (runs-mu)/np.sqrt(sigma_sq)
+        p_value = norm.cdf(stat)
+    # print("stat", stat)
+    # print("p_value", p_value)
+    
+    # if runs in [16, 17]: 
+        # print("C", C)
+        # print("runs", runs, runs_samp1, runs_samp2)
+        # print(myMST.shape, topleft.shape, bottomright.shape)
+        # print("m, n, N", m, n, N)
+        # print("mu", mu)
+        # print("sigma_sq", sigma_sq)
+        # # print("stat", stat)
+        # # print("p_value", p_value)
+        # print()
 
     ## plot
     if plot_mst: 

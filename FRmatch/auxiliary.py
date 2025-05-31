@@ -82,22 +82,22 @@ def cutoff_FRmatch(pmat, p_adj_method = "fdr_by", sig_level = 0.05):
         Matrix where 1 means p-value exceeded `sig_level`.
     """
     # https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html
-    pvals_adj = multipletests(pmat.unstack(), method = p_adj_method)
-    pvals_adj = pvals_adj[1].reshape((pmat.shape[1], pmat.shape[0])).T
-    pvals_adj = pvals_adj > sig_level
-    pvals_adj = pd.DataFrame(pvals_adj)
-    pvals_adj.columns = pmat.columns
-    pvals_adj.index = pmat.index
-
-    # pvals_adj = padj_FRmatch(pmat, p_adj_method)
+    # pvals_adj = multipletests(pmat.unstack(), method = p_adj_method)
+    # pvals_adj = pvals_adj[1].reshape((pmat.shape[1], pmat.shape[0])).T
     # pvals_adj = pvals_adj > sig_level
-    pvals_adj = pvals_adj.astype(int)
+    # pvals_adj = pd.DataFrame(pvals_adj)
+    # pvals_adj.columns = pmat.columns
+    # pvals_adj.index = pmat.index
+
+    pvals_adj = padj_FRmatch(pmat, p_adj_method)
+    pvals_adj = pvals_adj > sig_level
     pvals_adj = pvals_adj.astype(int)
     zeros = []
     for col in pvals_adj.columns: 
         if sum(pvals_adj[col]) == 0: 
             zeros.append(col)
     temp = pd.DataFrame(dict(zip(pvals_adj.columns, [1 if val in zeros else 0 for val in pvals_adj.columns])), index = ["unassigned"])
+    temp.columns.names = ["query_cluster", "index"]
     pvals_adj = pd.concat([pvals_adj, temp])
     return pvals_adj
 
@@ -124,3 +124,23 @@ def reorder_FRmatch(df, axis = 1):
     else: print("Error: `axis` must be in [0, 1]")
     
     return df
+
+# bonferroni : one-step correction
+
+# sidak : one-step correction
+
+# holm-sidak : step down method using Sidak adjustments
+
+# holm : step-down method using Bonferroni adjustments
+
+# simes-hochberg : step-up method (independent)
+
+# hommel : closed method based on Simes tests (non-negative)
+
+# fdr_bh : Benjamini/Hochberg (non-negative)
+
+# fdr_by : Benjamini/Yekutieli (negative)
+
+# fdr_tsbh : two stage fdr correction (non-negative)
+
+# fdr_tsbky : two stage fdr correction (non-negative)

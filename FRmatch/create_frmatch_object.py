@@ -98,7 +98,7 @@ def create_frmatch_object_adata(adata, nsforest_results, marker_col = "binary_ge
 
     return adata
 
-def create_frmatch_object_mtx(cell_by_gene, cluster_labels, nsforest_results, marker_col, taxonomy = None, additional_markers = [], save = False): 
+def create_frmatch_object_mtx(cell_by_gene, cluster_labels, cluster_header = None, nsforest_results = None, marker_col = None, taxonomy = None, additional_markers = [], save = False): 
     """\
     Creating an AnnData object to run FRmatch on from a cell by gene matrix.
 
@@ -127,7 +127,9 @@ def create_frmatch_object_mtx(cell_by_gene, cluster_labels, nsforest_results, ma
     adata = ad.AnnData(cell_by_gene)
     adata.obs = cluster_labels.copy()
     adata.obs = adata.obs.astype("category")
-    cluster_header = list(nsforest_results["cluster_header"])[0]
+
+    if nsforest_results: 
+        cluster_header = list(nsforest_results["cluster_header"])[0]
     
     if taxonomy: 
         dictionary = {"categories_ordered": list(taxonomy)}
@@ -136,7 +138,16 @@ def create_frmatch_object_mtx(cell_by_gene, cluster_labels, nsforest_results, ma
     else: 
         adata.uns["dendrogram_" + cluster_header] = {"categories_ordered": []}
     
-    adata = create_frmatch_object_adata(adata, nsforest_results, marker_col, additional_markers = additional_markers, save = save)
+    if nsforest_results and marker_col: 
+        adata = create_frmatch_object_adata(adata, nsforest_results, marker_col, additional_markers = additional_markers, save = save)
+    elif save: 
+        if isinstance(save, bool): 
+            save = f"adata_frmatch.h5ad"
+        elif ".h5ad" not in save: 
+            save = f"{save}.h5ad"
+        print(f"Saving anndata object as {save}...")
+        adata.write_h5ad(save)
+
     return adata
 
 # Converting adata.uns["nsforest_results"]["cluster"] to dataframe
