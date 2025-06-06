@@ -97,7 +97,8 @@ def cutoff_FRmatch(pmat, p_adj_method = "fdr_by", sig_level = 0.05):
         if sum(pvals_adj[col]) == 0: 
             zeros.append(col)
     temp = pd.DataFrame(dict(zip(pvals_adj.columns, [1 if val in zeros else 0 for val in pvals_adj.columns])), index = ["unassigned"])
-    temp.columns.names = ["query_cluster", "index"]
+    temp.columns.name = "query_cluster"
+    # temp.columns.names = ["query_cluster", "index"]
     pvals_adj = pd.concat([pvals_adj, temp])
     return pvals_adj
 
