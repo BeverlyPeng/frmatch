@@ -128,7 +128,7 @@ def create_frmatch_object_mtx(cell_by_gene, cluster_labels, cluster_header = Non
     adata.obs = cluster_labels.copy()
     adata.obs = adata.obs.astype("category")
 
-    if nsforest_results: 
+    if isinstance(nsforest_results, pd.DataFrame): 
         cluster_header = list(nsforest_results["cluster_header"])[0]
     
     if taxonomy: 
@@ -138,7 +138,7 @@ def create_frmatch_object_mtx(cell_by_gene, cluster_labels, cluster_header = Non
     else: 
         adata.uns["dendrogram_" + cluster_header] = {"categories_ordered": []}
     
-    if nsforest_results and marker_col: 
+    if isinstance(nsforest_results, pd.DataFrame) and marker_col: 
         adata = create_frmatch_object_adata(adata, nsforest_results, marker_col, additional_markers = additional_markers, save = save)
     elif save: 
         if isinstance(save, bool): 

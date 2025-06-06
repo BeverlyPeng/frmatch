@@ -11,7 +11,7 @@ import seaborn as sns
 from random import sample
 import matplotlib.patches as mpatches
 
-def plot_cell2cluster_old(results, reorder = True, order_query = [], order_ref = [], axis = 0, p_adj_method = "fdr_by", sig_level = 0.1, prefix = ["query_", "ref_"], width = 10, height = 10, title = None, save_intermediate = False, save = False): 
+def plot_cell2cluster(results, reorder = True, order_query = [], order_ref = [], axis = 0, p_adj_method = "fdr_by", sig_level = 0.1, prefix = ["query_", "ref_"], width = 10, height = 10, title = None, save_intermediate = False, save = False): 
 
     folder = "tutorial_hlca_cellref"
     # Pivotting results to ref_cluster as index and query_cluster as columns
@@ -71,7 +71,7 @@ def plot_cell2cluster_old(results, reorder = True, order_query = [], order_ref =
         results_7["match"] = results_7["match"].astype("category")
         results_7["match"] = results_7["match"].cat.set_categories(order_ref)
         results_7 = results_7.sort_values(["match", "query_cluster"])
-        
+
     results_7["match"] = [prefix[0] + val for val in results_7["match"]]
     results_7["query_cluster"] = [prefix[1] + val for val in results_7["query_cluster"]]
     if save_intermediate: results_7.to_csv(f"results_7_{p_adj_method}_{sig_level}.csv")
