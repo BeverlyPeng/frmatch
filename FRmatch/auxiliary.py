@@ -30,12 +30,14 @@ def filter_cluster(adata, cluster_header, filter_size):
     adata: AnnData
         Subset AnnData based on `filter_size`.
     """
+    var_names = list(adata.var.index)
     # Getting cluster sizes
     tab = pd.DataFrame(adata.obs[cluster_header].value_counts()).reset_index()
     # Filtering out small clusters
     columns = list(tab.columns)
     cluster_keep = list(tab[tab[columns[1]] > filter_size][columns[0]])
     adata = adata[adata.obs[cluster_header].isin(cluster_keep)]
+    adata.var.index = var_names
     return adata
 
 def padj_FRmatch(pmat, p_adj_method = "fdr_by"): 

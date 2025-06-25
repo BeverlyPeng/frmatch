@@ -58,6 +58,7 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
     dictionary
         FRmatch results with keys ["settings", "p_values", "stat"]
     """
+    
     # Saving settings as dictionary
     settings = {"query": prefix[0], "ref": prefix[1], "cluster_header_query": cluster_header_query, "cluster_header_ref": cluster_header_ref, "feature_selection": feature_selection, "use_cosine": use_cosine, "filter_size": filter_size, "subsamp_size": subsamp_size, "subsamp_iter": subsamp_iter, "subsamp_seed": subsamp_seed, "subsamp_iter_custom": subsamp_iter_custom, "subsamp_iter_custom_k": subsamp_iter_custom_k, "save": save}
     
@@ -92,13 +93,12 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
         marker_genes_common = list(set(query.var_names) & set(ref.var_names))
         if verbose > 0: 
             print(f"Feature selection: intersection of genes available from query and ref.")
-    
     ## filtering small clusters
     if verbose > 0: 
         print(f"Filtering small clusters: query and reference clusters with less than {filter_size} cells are not considered.")
-    query = FRmatch.filter_cluster(query, cluster_header_query, filter_size) 
     ref = FRmatch.filter_cluster(ref, cluster_header_ref, filter_size)
-        
+    query = FRmatch.filter_cluster(query, cluster_header_query, filter_size) 
+
     ## reduced data
     query_reduced = query[:, marker_genes_common]
     ref_reduced = ref[:, marker_genes_common]
