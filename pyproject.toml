@@ -6,7 +6,7 @@ license = "MIT"
 authors = [
     "Joyce Hu <joh011@ucsd.edu>", 
     "Beverly Peng <bpeng@jcvi.org>", 
-    "Ajith V. Pankajam <ajith.viswanathanasaripankajam@nih.gov>"
+    "Ajith V. Pankajam <ajith.viswanathanasaripankajam@nih.gov>",
     "Richard Scheuermann <richard.scheuermann@nih.gov>", 
     "Renee Zhang <yun.zhang@nih.gov>"
 ]
