@@ -1,8 +1,8 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath("./FRmatch"))
-import FRmatch
+sys.path.insert(0, os.path.abspath("./frmatch"))
+import frmatch
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
