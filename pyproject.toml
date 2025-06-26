@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "frmatch"
+version = "1.0"
+description =  "FRmatch single cell transcriptome matching method for incremental growth of reference atlases"
+license = "MIT"
+authors = [
+    "Joyce Hu <joh011@ucsd.edu>", 
+    "Beverly Peng <bpeng@jcvi.org>", 
+    "Ajith V. Pankajam <ajith.viswanathanasaripankajam@nih.gov>"
+    "Richard Scheuermann <richard.scheuermann@nih.gov>", 
+    "Renee Zhang <yun.zhang@nih.gov>"
+]
+maintainers = [
+    "Beverly Peng <bpeng@jcvi.org>"
+]
+readme = "README.md"
+packages = [{ include = "frmatch" }]
+
+[tool.poetry.dependencies]
+scanpy = "^1.9.3"
+python = "^3.8"
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api" 
