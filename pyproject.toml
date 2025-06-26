@@ -14,7 +14,7 @@ maintainers = [
     "Beverly Peng <bpeng@jcvi.org>"
 ]
 readme = "README.md"
-packages = [{ include = "FRmatch" }]
+packages = [{ include = "frmatch" }]
 
 [tool.poetry.dependencies]
 scanpy = "^1.9.3"
