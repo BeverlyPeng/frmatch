@@ -56,7 +56,7 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
     Returns
     -------
     dictionary
-        FRmatch results with keys ["settings", "p_values", "stat"]
+        FRmatch results with keys ["settings", "results"]
     """
     
     # Saving settings as dictionary
@@ -70,7 +70,7 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
             filename = save + ".pkl"
         else: 
             filename = save
-    
+    if verbose > 0: print(save)
     ## feature selection
     ## use query gene space
     if feature_selection == "query_genes": 
@@ -149,9 +149,11 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
             results = pd.concat([results, df])
             if save: 
                 with open(filename, 'wb') as f:
+                    print("saving intermediate", save)
                     pickle.dump({'settings': settings, "results": results}, f)
             
     if save: 
         with open(filename, 'wb') as f:
+            print("saving everything", save)
             pickle.dump({'settings': settings, "results": results}, f)
-    return results
+    return settings, results
