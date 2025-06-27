@@ -61,6 +61,7 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
     
     # Saving settings as dictionary
     settings = {"query": prefix[0], "ref": prefix[1], "cluster_header_query": cluster_header_query, "cluster_header_ref": cluster_header_ref, "feature_selection": feature_selection, "use_cosine": use_cosine, "filter_size": filter_size, "subsamp_size": subsamp_size, "subsamp_iter": subsamp_iter, "subsamp_seed": subsamp_seed, "subsamp_iter_custom": subsamp_iter_custom, "subsamp_iter_custom_k": subsamp_iter_custom_k, "save": save}
+    if verbose > 0: print(settings)
     
     if save: 
         if not isinstance(save, str): 
@@ -96,8 +97,8 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
     ## filtering small clusters
     if verbose > 0: 
         print(f"Filtering small clusters: query and reference clusters with less than {filter_size} cells are not considered.")
-    ref = FRmatch.filter_cluster(ref, cluster_header_ref, filter_size)
-    query = FRmatch.filter_cluster(query, cluster_header_query, filter_size) 
+    ref = frmatch.filter_cluster(ref, cluster_header_ref, filter_size)
+    query = frmatch.filter_cluster(query, cluster_header_query, filter_size) 
 
     ## reduced data
     query_reduced = query[:, marker_genes_common]
@@ -137,7 +138,7 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
             if subsamp_iter_custom: 
                 subsamp_iter = max(subsamp_iter, subsamp_iter_custom_k * query_df.shape[0])
                 
-            df = FRmatch.FRtest_cell2cluster(query_df, ref_df, subsamp_size = subsamp_size, subsamp_iter = subsamp_iter, subsamp_seed = subsamp_seed)
+            df = frmatch.FRtest_cell2cluster(query_df, ref_df, subsamp_size = subsamp_size, subsamp_iter = subsamp_iter, subsamp_seed = subsamp_seed)
             
             if df.shape[0] != query_df.shape[0] and warning_message: 
                 print(f"warning: Not all cells are randomly sampled. Consider increasing the number of iterations specified in the 'subsamp_iter' argument. query_cluster: {query_cluster} ref_cluster: {ref_cluster}")
