@@ -61,7 +61,7 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
     
     # Saving settings as dictionary
     settings = {"query": prefix[0], "ref": prefix[1], "cluster_header_query": cluster_header_query, "cluster_header_ref": cluster_header_ref, "feature_selection": feature_selection, "use_cosine": use_cosine, "filter_size": filter_size, "subsamp_size": subsamp_size, "subsamp_iter": subsamp_iter, "subsamp_seed": subsamp_seed, "subsamp_iter_custom": subsamp_iter_custom, "subsamp_iter_custom_k": subsamp_iter_custom_k, "save": save}
-    if verbose > 0: print(settings)
+    print(settings)
     
     if save: 
         if not isinstance(save, str): 
@@ -70,7 +70,7 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
             filename = save + ".pkl"
         else: 
             filename = save
-    if verbose > 0: print(save)
+    print(filename)
     ## feature selection
     ## use query gene space
     if feature_selection == "query_genes": 
@@ -149,11 +149,9 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
             results = pd.concat([results, df])
             if save: 
                 with open(filename, 'wb') as f:
-                    print("saving intermediate", save)
                     pickle.dump({'settings': settings, "results": results}, f)
             
     if save: 
         with open(filename, 'wb') as f:
-            print("saving everything", save)
             pickle.dump({'settings': settings, "results": results}, f)
     return settings, results
