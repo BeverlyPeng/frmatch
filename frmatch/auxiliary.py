@@ -99,13 +99,20 @@ def cutoff_FRmatch(pmat, p_adj_method = "fdr_by", sig_level = 0.05):
         if sum(pvals_adj[col]) == 0: 
             zeros.append(col)
     temp = pd.DataFrame(dict(zip(pvals_adj.columns, [1 if val in zeros else 0 for val in pvals_adj.columns])), index = ["unassigned"])
-    if len(list(temp.columns)[0]) == 1: 
-        temp.columns.name = "query_cluster"
-    elif len(list(temp.columns)[0]) == 2: 
+    if isinstance(temp.columns, pd.MultiIndex): 
         temp.columns.names = ["query_cluster", "index"]
     else: 
-        print("Something wrong")
-        return
+    # if len(list(temp.columns)[0]) == 1: 
+        temp.columns.name = "query_cluster"
+    # elif len(list(temp.columns)[0]) == 2: 
+    #     temp.columns.names = ["query_cluster", "index"]
+    # else: 
+    #     print("Something wrong")
+    #     print(list(temp.columns))
+    #     print(temp.columns)
+    #     print(temp)
+    
+        # return
 
     pvals_adj = pd.concat([pvals_adj, temp])
     return pvals_adj

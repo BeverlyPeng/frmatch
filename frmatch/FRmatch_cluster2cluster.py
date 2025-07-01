@@ -81,8 +81,8 @@ def FRmatch_cluster2cluster(query, ref, cluster_header_query, cluster_header_ref
         print(f"Filtering small clusters: query and reference clusters with less than {filter_size} cells are not considered.")
     query_shape = query.shape
     ref_shape = ref.shape
-    query = FRmatch.filter_cluster(query, cluster_header_query, filter_size) #only filter on size, not fscore
-    ref = FRmatch.filter_cluster(ref, cluster_header_ref, filter_size)
+    query = frmatch.filter_cluster(query, cluster_header_query, filter_size) #only filter on size, not fscore
+    ref = frmatch.filter_cluster(ref, cluster_header_ref, filter_size)
     if verbose > 0: 
         print(f"filtered query from {query_shape} -> {query.shape}")
         print(f"filtered ref from {ref_shape} -> {ref.shape}")
@@ -112,7 +112,7 @@ def FRmatch_cluster2cluster(query, ref, cluster_header_query, cluster_header_ref
             del ref_df["cluster"]
             if verbose > 0: print(query_df.shape, ref_df.shape)
 
-            df = FRmatch.FRtest_subsamp(query_df, ref_df, use_cosine = use_cosine, subsamp_size = subsamp_size, subsamp_iter = subsamp_iter, subsamp_seed = subsamp_seed, return_all = return_all)
+            df = frmatch.FRtest_subsamp(query_df, ref_df, use_cosine = use_cosine, subsamp_size = subsamp_size, subsamp_iter = subsamp_iter, subsamp_seed = subsamp_seed, return_all = return_all)
             df["query_cluster"] = query_cluster
             df["ref_cluster"] = ref_cluster
             results = pd.concat([results, df])

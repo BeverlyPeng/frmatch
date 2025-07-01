@@ -39,12 +39,12 @@ def plot_FRmatch(pmat, type_ = "matches", p_adj_method="fdr_by", sig_level = 0.0
             Plot title.
     """
     ## calculate adjusted p-values and determine matches
-    pmat_adj = FRmatch.padj_FRmatch(pmat, p_adj_method = p_adj_method)
-    pmat_cutoff = FRmatch.cutoff_FRmatch(pmat, p_adj_method = p_adj_method, sig_level = sig_level)
+    pmat_adj = frmatch.padj_FRmatch(pmat, p_adj_method = p_adj_method)
+    pmat_cutoff = frmatch.cutoff_FRmatch(pmat, p_adj_method = p_adj_method, sig_level = sig_level)
     
     ## reorder
     if reorder: 
-        pmat_cutoff = FRmatch.reorder_FRmatch(pmat_cutoff)
+        pmat_cutoff = frmatch.reorder_FRmatch(pmat_cutoff)
         pmat_adj = pmat_adj[list(pmat_cutoff.columns)]
     
     ## plot

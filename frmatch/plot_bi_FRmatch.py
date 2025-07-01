@@ -43,8 +43,8 @@ def plot_bi_FRmatch(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
             Whether to save png. If string, save as string.
     """
     ## get binary matrices for plotting
-    pmat_cutoff_e1_e2 = FRmatch.cutoff_FRmatch(e1_e2, p_adj_method = p_adj_method, sig_level = sig_level)
-    pmat_cutoff_e2_e1 = FRmatch.cutoff_FRmatch(e2_e1, p_adj_method = p_adj_method, sig_level = sig_level)
+    pmat_cutoff_e1_e2 = frmatch.cutoff_FRmatch(e1_e2, p_adj_method = p_adj_method, sig_level = sig_level)
+    pmat_cutoff_e2_e1 = frmatch.cutoff_FRmatch(e2_e1, p_adj_method = p_adj_method, sig_level = sig_level)
     
     ## combine two matrices to one two-way matrix
     mat1 = pmat_cutoff_e1_e2.drop("unassigned")
@@ -64,7 +64,7 @@ def plot_bi_FRmatch(e1_e2, e2_e1, prefix = ["query", "ref"], axis = 0,
     ## plot
     if not title: title = "FR-Match cluster-to-cluster"
     if reorder: 
-        mat_bi = FRmatch.reorder_FRmatch(mat_bi, axis = axis)
+        mat_bi = frmatch.reorder_FRmatch(mat_bi, axis = axis)
         # Putting "unassigned" at the bottom
         mat_bi = pd.concat([mat_bi.loc[mat_bi.index != 'unassigned'], mat_bi.loc[mat_bi.index == 'unassigned']])
     fig, (ax1) = plt.subplots(1, 1, figsize=(width, height))
