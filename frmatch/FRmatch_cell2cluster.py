@@ -70,7 +70,7 @@ def FRmatch_cell2cluster(query, ref, cluster_header_query, cluster_header_ref,
             filename = save + ".pkl"
         else: 
             filename = save
-    print(filename)
+        print(filename)
     ## feature selection
     ## use query gene space
     if feature_selection == "query_genes": 
