@@ -30,7 +30,7 @@ Follow the tutorial on: tbd
 
 ## Pipeline
 
-<img src="image.PNG">
+<img src="image.png">
 
 ### Prerequisites
 
@@ -40,7 +40,7 @@ Follow the tutorial on: tbd
 
 ## Versions and citations
 
-Hu et al. 2025. Benchmarking single cell transcriptome matching methods for incremental growth of reference atlases. [https://www.biorxiv.org/content/10.1101/2025.04.10.648034v1]. 
+Hu et al. 2025. Benchmarking single cell transcriptome matching methods for incremental growth of reference atlases. [https://www.biorxiv.org/content/10.1101/2025.04.10.648034v1]([https://www.biorxiv.org/content/10.1101/2025.04.10.648034v1). 
 
 Zhang et al. 2022. Cell type matching in single-cell RNA-sequencing data using FR-Match. *Scientific Reports*, [https://doi.org/10.1038/s41598-022-14192-z](https://doi.org/10.1038/s41598-022-14192-z).
 
@@ -52,13 +52,13 @@ Zhang et al. 2020. FR-Match: robust matching of cell type clusters from single c
 
 * Joyce Hu (johu@jcvi.org)
 
-* Yun (Renee) Zhang (yun.zhang@nih.gov)
-
 * Richard Scheuermann (richard.scheuermann@nih.gov)
+
+* Yun (Renee) Zhang (yun.zhang@nih.gov)
 
 ## License
 
-This project is licensed under the [MIT License](check with renee).
+This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgments
 

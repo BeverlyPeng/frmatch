@@ -45,7 +45,7 @@ def plot_cell2cluster(results, reorder = True, order_query = [], order_ref = [],
     
     if not title: title = "FR-Match cell-to-cluster"
     fig, (ax1) = plt.subplots(1, 1, figsize=(width, height))
-    sns.set_theme(style="whitegrid", rc={"grid.color": "lightgray", "grid.linewidth": 0.5})
+    # sns.set_theme(style="whitegrid", rc={"grid.color": "lightgray", "grid.linewidth": 0.5})
     ax = sns.scatterplot(results_7, x = "query_cluster", y = "match", hue = "Prop", size = "Prop", 
                         hue_norm = (0, 1), size_norm = (0, 1), legend = "brief", 
                         sizes = (1, 200), alpha = 0.75, linewidth = 0.7, edgecolor = "gray", 
