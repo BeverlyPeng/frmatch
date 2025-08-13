@@ -141,22 +141,61 @@ def reorder_FRmatch(df, axis = 1):
     
     return df
 
-# bonferroni : one-step correction
+def get_annotation(results, p_adj_method = "fdr_by", sig_level = 0.05, force_match = False):
+    """Converts frmatch.FRmatch_cell2cluster output into annotation format for adata.obs.
+    Applied p-value adjustment and p-value threshold cutoffs.
+    Adds "unassigned" for cells with no p-values above cutoff.
+    This method is adapted from frmatch.plot_FRmatch_cell2cluster.py.
 
-# sidak : one-step correction
+    Args:
+        results (pd.DataFrame): frmatch.FRmatch_cell2cluster output
 
-# holm-sidak : step down method using Sidak adjustments
+    Returns:
+        pd.DataFrame: Annotation dataframe to be merged with adata.obs.
+    """
 
-# holm : step-down method using Bonferroni adjustments
+    # Pivotting results to ref_cluster as index and query_cluster as columns
+    results = results.sort_values(
+        ["query_cluster", "index", "p_value"], ascending=[True, True, False]
+    )
+    results = results[
+        ~results.duplicated(["index", "query_cluster", "ref_cluster"], keep="first")
+    ]
+    results = results.pivot(
+        index="ref_cluster", columns=["query_cluster", "index"], values="p_value"
+    ).replace(np.nan, 0)
 
-# simes-hochberg : step-up method (independent)
+    if force_match: 
+        max_idx = results.idxmax()
+        for col in results.columns: 
+            row = max_idx[col]
+            results.loc[results.index != row, col] = 0
 
-# hommel : closed method based on Simes tests (non-negative)
+    # Adjusting p-values
+    results_2 = padj_FRmatch(results, p_adj_method=p_adj_method)
+    
+    # Adding the unassigned row
+    if not force_match: 
+        # Setting values to zero unless passes sig_level threshold
+        results_3 = results_2.applymap(lambda x: x if x > sig_level else 0)
 
-# fdr_bh : Benjamini/Hochberg (non-negative)
+        # Adding the unassigned row
+        samples = results_3.columns[results_3.sum() == 0]
+        temp = pd.DataFrame(
+            dict(zip(samples, [1] * len(samples))), index=["unassigned"]
+        )
+        if temp.shape[1] != 0:
+            temp.columns.names = ["query_cluster", "index"]
+            temp.index.name = "ref_cluster"
+            results_4 = pd.concat([results_3, temp])
+        else:
+            results_4 = results_3.copy()
+    else: results_4 = results_2.copy()
 
-# fdr_by : Benjamini/Yekutieli (negative)
+    # idxmax: returns ref_cluster with largest value per sample
+    temp = pd.DataFrame(results_4.max())
+    annotation = pd.DataFrame(results_4.idxmax()).reset_index()
+    annotation[1] = list(temp[0])
+    annotation = annotation.rename(columns = {0: "ref_cluster", 1: "p_value"})
 
-# fdr_tsbh : two stage fdr correction (non-negative)
-
-# fdr_tsbky : two stage fdr correction (non-negative)
+    return annotation
