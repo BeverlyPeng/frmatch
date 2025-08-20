@@ -27,17 +27,18 @@ Please start from the [tutorials](https://github.com/BeverlyPeng/frmatch/tree/ma
 
 Documentation: tbd
 
+## Prerequisites
+
+* This python package is written and tested in python 3.11, scanpy 1.9.6.
+* Other required libraries: numpy, pandas, sklearn, plotly, time, tqdm.
+* Feature selection: [JCVenterInstitute/NSForest](https://github.com/JCVenterInstitute/NSForest)
+
 ## Pipeline
 
 <img src="image.png">
 
-### Prerequisites
-
-* This is a python script written and tested in python 3.11, scanpy 1.9.6.
-* Other required libraries: numpy, pandas, sklearn, plotly, time, tqdm.
-* Feature selection: [JCVenterInstitute/NSForest](https://github.com/JCVenterInstitute/NSForest)
-
 ## Versions and citations
+
 v2.0 (Python):
 
 Hu et al. 2025. Benchmarking single cell transcriptome matching methods for incremental growth of reference atlases. [https://www.biorxiv.org/content/10.1101/2025.04.10.648034v1](https://www.biorxiv.org/content/10.1101/2025.04.10.648034v1). 
@@ -68,4 +69,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 * Allen Institute for Brain Science
 * Chan Zuckerberg Initiative (DAF 2018–182730)
-* The NIH BRAIN Initiative (1RF1MH123220)
+* NIH BRAIN Initiative (1RF1MH123220)
+* NIH Common Fund (1R03OD036499, OT2OD033756 and OT2OD026671)
+* National Library of Medicine
