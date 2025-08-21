@@ -7,7 +7,7 @@ plotting
 
 .. autofunction:: frmatch.plot_cluster_by_markers
 
-
+.. autofunction:: frmatch.plot_FRmatch
 
 .. autofunction:: frmatch.plot_bi_FRmatch
 
