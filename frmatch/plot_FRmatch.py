@@ -10,7 +10,7 @@ import matplotlib.patches as mpatches
 import matplotlib
 import seaborn as sns
 
-def plot_FRmatch(pmat, type_ = "matches", p_adj_method="fdr_by", sig_level = 0.05, marker_legend_loc = (2.4, 1), 
+def plot_FRmatch(pmat, plot_type = "matches", p_adj_method="fdr_by", sig_level = 0.05, marker_legend_loc = (2.4, 1), 
                  reorder = True, ignore_unassigned = False, width = 6, height = 12, title = None, save = False): 
     """\
     Plotting one-directional FRmatch matching results after running padj_FRmatch and cutoff_FRmatch.
@@ -19,7 +19,7 @@ def plot_FRmatch(pmat, type_ = "matches", p_adj_method="fdr_by", sig_level = 0.0
     ----------
         pmat: pd.DataFrame
             P-value matrix.
-        type_: ["matches", "padj"] (default: "matches")
+        plot_type: ["matches", "padj"] (default: "matches")
             Type of plot. If "matches", plots heatmap of cutoff_FRmatch. If "padj", plots adjusted p-values with `sig_level` as theshold.
         p_adj_method: str (default: "fdr_by")
             P-value adjustment method. 
@@ -48,7 +48,7 @@ def plot_FRmatch(pmat, type_ = "matches", p_adj_method="fdr_by", sig_level = 0.0
         pmat_adj = pmat_adj[list(pmat_cutoff.columns)]
     
     ## plot
-    if type_ == "matches": 
+    if plot_type == "matches": 
         if not title: title = "FR-Match cluster-to-cluster"
         if ignore_unassigned: 
             pmat_cutoff = pmat_cutoff.drop("unassigned")
@@ -64,7 +64,7 @@ def plot_FRmatch(pmat, type_ = "matches", p_adj_method="fdr_by", sig_level = 0.0
                        mpatches.Patch(color='#4575B4', label='No match')]
             a = plt.legend(title = "", handles = handles, bbox_to_anchor = marker_legend_loc)
             
-    elif type_ == "padj": 
+    elif plot_type == "padj": 
         if not title: title = "FR-Match cluster-to-cluster adjusted p-values"
         values = pd.DataFrame(pmat_adj.unstack()).reset_index()
         fig, (ax1) = plt.subplots(1, 1, figsize=(width, height))
@@ -77,7 +77,7 @@ def plot_FRmatch(pmat, type_ = "matches", p_adj_method="fdr_by", sig_level = 0.0
         a = plt.axhline(sig_level, color = "red", linestyle = '--', alpha = 0.5)
 
     if save == True: 
-        plt.savefig(f"frmatch_results_onedirectional_{type_}.png")
+        plt.savefig(f"frmatch_results_onedirectional_{plot_type}.png")
     elif isinstance(save, str): 
         plt.savefig(save)
     
