@@ -7,4 +7,9 @@ Contents
 .. toctree::
 
     installation
-    frmatch
+    create_frmatch_object
+    cluster2cluster
+    cell2cluster
+    plotting
+    auxiliary
+    
