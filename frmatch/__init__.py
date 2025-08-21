@@ -12,7 +12,7 @@ from .plot_cluster_by_markers import plot_cluster_by_markers
 from .plot_clusterSize import plot_clusterSize
 from .plot_logcounts import plot_logcounts
 from .plot_FRmatch import plot_FRmatch
-from .utils import get_markers, compare
+from .utils import get_markers
 
 __all__ = ["filter_cluster", "cutoff_FRmatch", "padj_FRmatch", "reorder_FRmatch", "get_annotation", "FRtest_subsamp", "FRtest_cell2cluster", "create_frmatch_object_adata", "create_frmatch_object_mtx", "uns_to_df", "FRmatch_cluster2cluster", "FRmatch_cell2cluster", "FRtest", "normalization", "normalization_np", "plot_bi_FRmatch", "plot_cell2cluster", "plot_cluster_by_markers", "plot_clusterSize", "plot_logcounts", "plot_FRmatch", "get_markers", "compare"]
 
