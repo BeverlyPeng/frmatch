@@ -15,7 +15,29 @@ from random import sample
 # the next step is to set up the iterative subsampling based on FRtest
 def FRtest_subsamp(samp1, samp2, use_cosine = False, subsamp_size = 20, subsamp_iter = 1000, subsamp_seed = False, return_all = False): 
     """\
-    Subsampling samples to `subsamp_size` `subsamp_iter` times. Returns dataframe of stat and p_values.  
+    Subsampling samples to `subsamp_size` `subsamp_iter` times. Returns dataframe of stat and p_values.
+
+    Parameters
+    ----------
+        samp1: pd.DataFrame()
+            Dataframe representing the query.
+        samp2: pd.DataFrame()
+            Dataframe representing the reference.
+        use_cosine: bool (default: False)
+            Whether to use cosine distance vs Euclidean distance for tree construction.
+        subsamp_size: int (default: 10)
+            Number of cells per dataset to run tree construction.
+        subsamp_iter: int (default: 1000)
+            Number of iterations
+        subsamp_seed: bool (default: False)
+            Seed for random number generator.
+        return_all: bool (default: False)
+            Whether to return all FRtest results or the median.
+    
+    Returns
+    -------
+    out_all_sort: pd.DataFrame()
+        Median row after sorted by p-value.
     """
     ## data input matrices: rows = cells, columns = genes
     xx = samp1.copy()
@@ -47,6 +69,29 @@ def FRtest_subsamp(samp1, samp2, use_cosine = False, subsamp_size = 20, subsamp_
         return out_all_sort.iloc[int(subsamp_iter/2):int(subsamp_iter/2) + 1,:] # returning median row
 
 def FRtest_cell2cluster(samp1, samp2, use_cosine = False, subsamp_size = 20, subsamp_iter = 1000, subsamp_seed = False): 
+    """\
+    Subsampling samples to `subsamp_size` `subsamp_iter` times. Keeps the smallest p-value per sample. Returns dataframe of stat and p_values.
+
+    Parameters
+    ----------
+        samp1: pd.DataFrame()
+            Dataframe representing the query.
+        samp2: pd.DataFrame()
+            Dataframe representing the reference.
+        use_cosine: bool (default: False)
+            Whether to use cosine distance vs Euclidean distance for tree construction.
+        subsamp_size: int (default: 10)
+            Number of cells per dataset to run tree construction.
+        subsamp_iter: int (default: 1000)
+            Number of iterations
+        subsamp_seed: bool (default: False)
+            Seed for random number generator.
+    
+    Returns
+    -------
+    out_max: pd.DataFrame()
+        All p-values for each sample and reference cluster pair.
+    """
     ## data input matrices: rows = cells, columns = genes
     xx = samp1.copy()
     yy = samp2.copy()

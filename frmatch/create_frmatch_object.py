@@ -108,6 +108,8 @@ def create_frmatch_object_mtx(cell_by_gene, cluster_labels, cluster_header = Non
             Cell by gene matrix
         cluster_labels: list
             Cluster membership.
+        cluster_header: str
+            Column in adata.obs to store cell annotation.
         nsforest_results: pd.DataFrame
             NSForest output.
         marker_col: str (default: "binary_genes")
@@ -152,6 +154,9 @@ def create_frmatch_object_mtx(cell_by_gene, cluster_labels, cluster_header = Non
 
 # Converting adata.uns["nsforest_results"]["cluster"] to dataframe
 def uns_to_df(dictionary): 
+    """\
+    Simple function for converting AnnData.uns dictionary to pd.DataFrame.
+    """
     df = pd.DataFrame(dictionary).transpose().iloc[:, ::-1]
     df["clusterName"] = df.index
     df = df.reset_index(drop = True).iloc[:, ::-1]

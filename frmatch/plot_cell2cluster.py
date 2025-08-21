@@ -12,6 +12,36 @@ from random import sample
 import matplotlib.patches as mpatches
 
 def plot_cell2cluster(results, reorder = True, order_query = [], order_ref = [], axis = 0, p_adj_method = "fdr_by", sig_level = 0.1, prefix = ["query_", "ref_"], width = 10, height = 10, title = None, save = False): 
+    """\
+    Plotting one-directional FRmatch cell2cluster matching results after running padj_FRmatch and cutoff_FRmatch.
+
+    Parameters
+    ----------
+        results: pd.DataFrame
+            P-values for each sample and reference cluster pair.
+        reorder: bool (default: True)
+            Whether to run reorder_FRmatch into a diagonal.
+        order_query: list (default: [])
+            List of query clusters for manual ordering.
+        order_ref: list (default: [])
+            List of reference clusters for manual ordering.
+        axis: [0, 1] (default: 1)
+            Axis to reorder pd.DataFrame.
+        p_adj_method: str (default: "fdr_by")
+            P-value adjustment method. 
+        sig_level: float (default: 0.1)
+            P-value cutoff threshold.
+        prefix: list (default: [“query”, “ref”])
+            Labels for query and reference data.
+        width: int (default: 10)
+            Width of plot.
+        height: int (default: 10)
+            Height of plot.
+        title: str (default: None)
+            Plot title.
+        save: bool | str (default: False)
+            Whether to save png. If string, save as string.
+    """
     results_5 = pd.DataFrame(results.value_counts(["query_cluster", "ref_cluster"])).reset_index().rename(columns = {0: "count"})
     results_5 = results_5.pivot(index='ref_cluster', columns='query_cluster').replace(np.nan, 0)
     results_5.columns = [val[1] for val in list(results_5.columns)]

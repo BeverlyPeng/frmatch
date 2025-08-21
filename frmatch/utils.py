@@ -6,6 +6,15 @@ import scanpy as sc
 def get_markers(adata, cluster_header, marker_col): 
     """\
     Getting NS-Forest markers in dendrogram order. Removing duplicates. 
+
+    Parameters
+    ----------
+        adata: AnnData
+            Annotated data matrix.
+        cluster_header: str
+            Column in adata.obs storing cell annotation.
+        marker_col: str
+            Column in nsforest_results to subset AnnData. Other options include ['NSForest_markers', 'markers', 'binary_genes'].
     """
     markers = []
     cluster_order = []

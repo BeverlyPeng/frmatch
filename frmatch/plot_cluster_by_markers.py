@@ -12,20 +12,41 @@ from random import sample
 # from pheatmap import pheatmap
 import matplotlib.patches as mpatches
 
-def plot_cluster_by_markers(query, cluster_header, cluster, markers = None, marker_legend_loc = None, 
+def plot_cluster_by_markers(query, cluster_header, cluster, marker_genes = [], marker_legend_loc = None, 
                             nsamp = 30, colorbar_loc = (0, 0.88), 
-                            name_adata = "E1", name_markers = "E2", use_common_markergenes = True,
-                            scale_colorbar = False, cellheight = 10, cellwidth = 5, title = None, filename = None): 
+                            name_adata = "E1", name_markers = "E1", title = None, filename = None): 
     """\
-    
+    Plotting a random subset of given cluster by the input genes.
+
+    Parameters
+    ----------
+        query: AnnData
+            Query object.
+        cluster_header: str
+            Column in `query.obs` storing cell annotation.
+        cluster: str
+            Specific cluster to plot.
+        marker_genes: list (default: [])
+            Genes to subset instead of ref.uns["markers"].
+        marker_legend_loc: tuple (default: None)
+            Location to plot legend.
+        nsamp: int (default: 30)
+            Number of cells per cluster to plot.
+        colorbar_loc: tuple (default: (0, 0.88))
+            Location to plot colorbar.
+        name_adata: str (default: "E1")
+            Label for `query`.
+        name_markers: str (default: "E2")
+            Label for marker set.
     """
+
     ## check if the cluster is in query
     if cluster not in list(np.unique(query.obs[cluster_header])): 
         return f"{cluster} not found in query"
     
     ## marker genes IN ORDER
-    if isinstance(markers, list): 
-        marker_genes = markers[:]
+    if len(marker_genes) > 0: 
+        marker_genes = marker_genes[:]
     elif "markers" in query.uns: 
 #         marker_genes = get_markers(query, cluster_header, "NSForest_markers")
         marker_genes = query.uns["markers"]
@@ -38,12 +59,6 @@ def plot_cluster_by_markers(query, cluster_header, cluster, markers = None, mark
     ## cells of query cluster
     col_query = query.obs[cluster_header] == cluster
     
-#     if use_common_markergenes: 
-#         marker_genes_common = []
-#         for marker in marker_genes: 
-#             if marker in list(query.var_names): 
-#                 marker_genes_common.append(marker)
-#         marker_genes = marker_genes_common[:]
     query_df = query[query.obs_names[col_query], marker_genes].to_df()
     
     ## randomly select nsamp number of cells

@@ -1,4 +1,4 @@
-plotting
+Plotting
 ========
 
 .. autofunction:: frmatch.plot_clusterSize

@@ -1,5 +1,5 @@
-plotting
-========
+Auxiliary
+=========
 
 .. autofunction:: frmatch.filter_cluster
 
