@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "frmatch"
-version = "1.0"
+version = "2.0"
 description =  "FRmatch single cell transcriptome matching method for incremental growth of reference atlases"
 license = "MIT"
 authors = [
