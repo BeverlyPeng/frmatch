@@ -75,7 +75,7 @@ def create_frmatch_object_adata(adata, nsforest_results, marker_col = "binary_ge
     additional_markers = list(set(additional_markers).intersection(set(adata.var_names)))
     genes.extend(additional_markers)
     genes = list(np.unique(genes))
-    adata = adata[:,genes]
+    adata = adata[:,genes].copy()
     
     if not isinstance(list(nsforest_results[marker_col])[0], list): 
         nsforest_results[marker_col] = [val.replace("'", "").replace("[", "").replace("]", "").split(", ") for val in nsforest_results[marker_col]]
